@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public int numberOfTrailBombs;
     public float distanceAway;
     public float warpDistance;
+    public float range; 
     // Update is called once per frame
     void Update()
     {
@@ -34,6 +35,11 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             WarpPlayer(enemyTransform, warpDistance);
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            DetectAstroids(range, asteroidTransforms); 
         }
     }
 
@@ -99,6 +105,23 @@ public class Player : MonoBehaviour
         if(ratio <= 1 && ratio >= 0)
         {
             transform.position = Vector2.Lerp(transform.position, enemyTransform.position, ratio); 
+        }
+    }
+
+    public void DetectAstroids(float inMaxRange, List <Transform> inAstroids)
+    {
+      for(int i = 0; i < inAstroids.Count; i++)
+        {
+            Vector3 astroidPos = inAstroids[i].position;
+            Vector2 playerPos = transform.position; 
+
+            float playerAstroidDistance = Vector3.Distance(astroidPos, transform.position);
+            if(playerAstroidDistance <= inMaxRange && playerAstroidDistance >= 0)
+            {
+                Vector2 vecToBeNormalized = astroidPos - transform.position;
+               
+                Debug.DrawLine(playerPos, (vecToBeNormalized.normalized * 2.5f) + playerPos, Color.green, 50f);
+            }
         }
     }
 }
