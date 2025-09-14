@@ -9,7 +9,8 @@ public class Player : MonoBehaviour
     public List<Transform> asteroidTransforms;
     public Vector2 bombOffset;
     public float bombTrailSpacing;
-    public int numberOfTrailBombs; 
+    public int numberOfTrailBombs;
+    public float distanceAway; 
 
     // Update is called once per frame
     void Update()
@@ -23,6 +24,11 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             SpawnBombTrail(bombTrailSpacing, numberOfTrailBombs); 
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            SpawnBombOnRandomCorner(distanceAway);
         }
     }
 
@@ -42,5 +48,44 @@ public class Player : MonoBehaviour
             playerLocation.y -= (inBombSpacing * i);
             Instantiate(bombPrefab, playerLocation, Quaternion.identity); 
         }
+    }
+
+    public void SpawnBombOnRandomCorner(float inDistance)
+    {
+        int whichCorner = Random.Range(0, 4);
+        Vector2 playerPos = transform.position; 
+        if(whichCorner == 0)
+        {
+            playerPos += Vector2.up;
+            playerPos += Vector2.left;
+            playerPos.x -= inDistance;
+            playerPos.y += inDistance; 
+        }
+
+        else if(whichCorner == 1)
+        {
+            playerPos += Vector2.up;
+            playerPos += Vector2.right;
+            playerPos.x += inDistance;
+            playerPos.y += inDistance; 
+        }
+
+        else if(whichCorner == 2)
+        {
+            playerPos += Vector2.down;
+            playerPos += Vector2.right;
+            playerPos.x += inDistance;
+            playerPos.y -= inDistance; 
+        }
+
+        else
+        {
+            playerPos += Vector2.down;
+            playerPos += Vector2.left;
+            playerPos.x -= inDistance;
+            playerPos.y -= inDistance;
+        }
+       
+        Instantiate(bombPrefab, playerPos, Quaternion.identity); 
     }
 }
