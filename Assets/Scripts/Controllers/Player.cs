@@ -12,7 +12,8 @@ public class Player : MonoBehaviour
     public int numberOfTrailBombs;
     public float distanceAway;
     public float warpDistance;
-    public float range; 
+    public float range;
+    public float speed; 
     // Update is called once per frame
     void Update()
     {
@@ -41,6 +42,8 @@ public class Player : MonoBehaviour
         {
             DetectAstroids(range, asteroidTransforms); 
         }
+
+        PlayerMovement();
     }
 
     public void SpawnBombAtOffset(Vector3 inOffset)
@@ -108,20 +111,47 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void DetectAstroids(float inMaxRange, List <Transform> inAstroids)
+    public void DetectAstroids(float inMaxRange, List<Transform> inAstroids)
     {
-      for(int i = 0; i < inAstroids.Count; i++)
+        for (int i = 0; i < inAstroids.Count; i++)
         {
             Vector3 astroidPos = inAstroids[i].position;
-            Vector2 playerPos = transform.position; 
+            Vector2 playerPos = transform.position;
 
             float playerAstroidDistance = Vector3.Distance(astroidPos, transform.position);
-            if(playerAstroidDistance <= inMaxRange && playerAstroidDistance >= 0)
+            if (playerAstroidDistance <= inMaxRange && playerAstroidDistance >= 0)
             {
                 Vector2 vecToBeNormalized = astroidPos - transform.position;
-               
+
                 Debug.DrawLine(playerPos, (vecToBeNormalized.normalized * 2.5f) + playerPos, Color.green, 50f);
             }
         }
+    }
+
+    public void PlayerMovement()
+    {
+        Vector3 velocity = transform.position;
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            Debug.Log("meow");
+            velocity.y += speed * Time.deltaTime;
+        }
+
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            velocity.y -= speed * Time.deltaTime;
+        }
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            velocity.x -= speed * Time.deltaTime;
+        }
+
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            velocity.x += speed * Time.deltaTime;
+        }
+
+        transform.position = velocity; 
     }
 }
