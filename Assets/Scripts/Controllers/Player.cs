@@ -13,7 +13,10 @@ public class Player : MonoBehaviour
     public float distanceAway;
     public float warpDistance;
     public float range;
-    public float speed; 
+    public float maxSpeed;
+    public float accelerationTime;
+    public float deccelerationTime; 
+    private Vector3 velocity; 
     // Update is called once per frame
     void Update()
     {
@@ -130,28 +133,57 @@ public class Player : MonoBehaviour
 
     public void PlayerMovement()
     {
-        Vector3 velocity = transform.position;
-        if (Input.GetKey(KeyCode.UpArrow))
+        float acceleration = maxSpeed / accelerationTime;
+        float decceleration = maxSpeed / deccelerationTime; 
+        //If the player is pressing any key runs this code to check which direction (if any) then moves the player ship accordingly 
+        if (Input.anyKey)
         {
-            Debug.Log("meow");
-            velocity.y += speed * Time.deltaTime;
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                velocity += acceleration * Time.deltaTime * Vector3.up;
+            }
+
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                velocity += acceleration * Time.deltaTime * Vector3.down;
+            }
+
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                velocity += acceleration * Time.deltaTime * Vector3.left;
+            }
+
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                velocity += acceleration * Time.deltaTime * Vector3.right;
+            }
+        }
+        //For when the player isn't clicking something, checks to see if they're moving then begins to progressively slow them down 
+        else
+        {
+            if(velocity.x > 0)
+            {
+                velocity -= decceleration * Time.deltaTime * Vector3.right;
+            }
+
+            if(velocity.x < 0)
+            {
+                velocity -= decceleration * Time.deltaTime * Vector3.left; 
+            }
+
+            if(velocity.y > 0)
+            {
+                velocity -= decceleration * Time.deltaTime * Vector3.up; 
+            }
+            
+            if(velocity.y < 0)
+            {
+                velocity -= decceleration * Time.deltaTime * Vector3.down; 
+            }
         }
 
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            velocity.y -= speed * Time.deltaTime;
-        }
 
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            velocity.x -= speed * Time.deltaTime;
-        }
-
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            velocity.x += speed * Time.deltaTime;
-        }
-
-        transform.position = velocity; 
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        transform.position += velocity * Time.deltaTime; 
     }
 }
