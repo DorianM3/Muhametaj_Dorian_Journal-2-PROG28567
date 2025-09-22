@@ -164,21 +164,37 @@ public class Player : MonoBehaviour
             if(velocity.x > 0)
             {
                 velocity -= decceleration * Time.deltaTime * Vector3.right;
+                if (velocity.x < 0)
+                {
+                    velocity.x = 0;
+                }
             }
 
             if(velocity.x < 0)
             {
-                velocity -= decceleration * Time.deltaTime * Vector3.left; 
+                velocity -= decceleration * Time.deltaTime * Vector3.left;
+                if (velocity.x > 0)
+                {
+                    velocity.x = 0;
+                }
             }
 
             if(velocity.y > 0)
             {
                 velocity -= decceleration * Time.deltaTime * Vector3.up; 
+                if(velocity.y < 0)
+                {
+                    velocity.y = 0; 
+                }
             }
             
             if(velocity.y < 0)
             {
-                velocity -= decceleration * Time.deltaTime * Vector3.down; 
+                velocity -= decceleration * Time.deltaTime * Vector3.down;
+                if (velocity.y > 0)
+                {
+                    velocity.y = 0;
+                }
             }
         }
 
