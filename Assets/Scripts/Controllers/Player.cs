@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -16,7 +17,9 @@ public class Player : MonoBehaviour
     public float maxSpeed;
     public float accelerationTime;
     public float deccelerationTime; 
-    private Vector3 velocity; 
+    private Vector3 velocity;
+    public float radarRadius;
+    public int numberOfPoints; 
     // Update is called once per frame
     void Update()
     {
@@ -47,6 +50,7 @@ public class Player : MonoBehaviour
         }
 
         PlayerMovement();
+        PlayerRadar(radarRadius, numberOfPoints); 
     }
 
     public void SpawnBombAtOffset(Vector3 inOffset)
@@ -202,4 +206,30 @@ public class Player : MonoBehaviour
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         transform.position += velocity * Time.deltaTime; 
     }
-}
+
+    public void PlayerRadar(float radius, int numberOfCircles)
+    {
+      
+            float angleStep = 360f / numberOfCircles;
+            float radians = angleStep * Mathf.Deg2Rad;
+
+            List<Vector3> points = new List<Vector3>();
+            for(int i = 0; i < numberOfCircles; i++)
+            {
+                float adjustments = radians * i;
+                Vector3 point = new Vector3(Mathf.Cos(radians + adjustments), Mathf.Sin(radians + adjustments)) * radius;
+
+                points.Add(point);
+            }
+
+        Vector3 center = transform.position;
+
+        for (int i = 0; i < points.Count - 1; i++)
+        {
+            Debug.DrawLine(center + points[i], center + points[i + 1], Color.green);
+        }
+        Debug.DrawLine(center + points[points.Count - 1], center + points[0], Color.green);
+
+        }
+    }
+
