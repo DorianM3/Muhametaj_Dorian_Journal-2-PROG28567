@@ -207,29 +207,38 @@ public class Player : MonoBehaviour
         transform.position += velocity * Time.deltaTime; 
     }
 
-    public void PlayerRadar(float radius, int numberOfCircles)
+    public void PlayerRadar(float radius, int numberOfPoints)
     {
-      
-            float angleStep = 360f / numberOfCircles;
-            float radians = angleStep * Mathf.Deg2Rad;
 
-            List<Vector3> points = new List<Vector3>();
-            for(int i = 0; i < numberOfCircles; i++)
-            {
-                float adjustments = radians * i;
-                Vector3 point = new Vector3(Mathf.Cos(radians + adjustments), Mathf.Sin(radians + adjustments)) * radius;
+        float angleInterval = 360f / numberOfPoints;
+        float radians = angleInterval * Mathf.Deg2Rad;
 
-                points.Add(point);
-            }
+        List<Vector3> points = new List<Vector3>();
+    
+        for (int i = 0; i < numberOfPoints + 1; i++)
+        {
+            float adjustments = radians * i;
+            Vector3 point = new Vector3(Mathf.Cos(adjustments), Mathf.Sin(adjustments)) * radius;
 
+            points.Add(point);
+        }
+       
         Vector3 center = transform.position;
-
+        float isInRadius = Vector3.Distance(enemyTransform.position, transform.position);
+       
         for (int i = 0; i < points.Count - 1; i++)
         {
-            Debug.DrawLine(center + points[i], center + points[i + 1], Color.green);
-        }
-        Debug.DrawLine(center + points[points.Count - 1], center + points[0], Color.green);
+             if (isInRadius >= radius) 
+            {
+                Debug.DrawLine(center + points[i], center + points[i + 1], Color.green);
+            }
 
+            else if (isInRadius < radius)
+            {
+                Debug.DrawLine(center + points[i], center + points[i + 1], Color.red);
+            }
         }
+
+       }
     }
 
