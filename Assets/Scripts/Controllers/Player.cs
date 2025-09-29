@@ -5,21 +5,36 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [Header("Transforms and Objects")]
     public Transform enemyTransform;
     public GameObject bombPrefab;
+    public GameObject powerUpPrefab;
+
+    [Space(10)]
+    [Header("Asteroid List")]
     public List<Transform> asteroidTransforms;
+    [Space(10)]
+    [Header("Bomb Values")]
     public Vector2 bombOffset;
     public float bombTrailSpacing;
     public int numberOfTrailBombs;
+    [Space(10)]
+    [Header("Commands")]
     public float distanceAway;
     public float warpDistance;
     public float range;
+    [Space(10)]
+    [Header("Movement")]
     public float maxSpeed;
     public float accelerationTime;
     public float deccelerationTime; 
     private Vector3 velocity;
+    [Space(10)]
+    [Header("Radius & Points")]
     public float radarRadius;
-    public int numberOfPoints; 
+    public int numberOfPoints;
+    public float powerUpRadius;
+    public int numberOfPowerups; 
     // Update is called once per frame
     void Update()
     {
@@ -50,7 +65,12 @@ public class Player : MonoBehaviour
         }
 
         PlayerMovement();
-        PlayerRadar(radarRadius, numberOfPoints); 
+        PlayerRadar(radarRadius, numberOfPoints);
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            SpawnPowerUps(powerUpRadius, numberOfPowerups);
+        }
     }
 
     public void SpawnBombAtOffset(Vector3 inOffset)
@@ -240,5 +260,25 @@ public class Player : MonoBehaviour
         }
 
        }
+
+    public void SpawnPowerUps(float radius, float numberOfPowerUps)
+    {
+        float angleInterval = 360f / numberOfPowerUps;
+        float radians = angleInterval * Mathf.Deg2Rad;
+        List<Vector3> points = new List<Vector3>();
+        for (int i = 0; i < numberOfPowerUps; i++)
+        {
+            float adjustments = radians * i;
+            Vector3 point = new Vector3(Mathf.Cos(adjustments), Mathf.Sin(adjustments)) * radius;
+
+            points.Add(point);
+        }
+
+        for(int i = 0; i < points.Count; i++)
+        {
+            Instantiate(powerUpPrefab, points[i] + transform.position, Quaternion.identity);
+        }
+    }
+
     }
 
