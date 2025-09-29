@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class Player : MonoBehaviour
     public Transform enemyTransform;
     public GameObject bombPrefab;
     public GameObject powerUpPrefab;
+    public GameObject missilePrefab;
+
 
     [Space(10)]
     [Header("Asteroid List")]
@@ -27,7 +31,7 @@ public class Player : MonoBehaviour
     [Header("Movement")]
     public float maxSpeed;
     public float accelerationTime;
-    public float deccelerationTime; 
+    public float deccelerationTime;
     private Vector3 velocity;
     [Space(10)]
     [Header("Radius & Points")]
@@ -70,6 +74,11 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             SpawnPowerUps(powerUpRadius, numberOfPowerups);
+        }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            MissileHoming();
         }
     }
 
@@ -280,5 +289,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void MissileHoming() 
+    {
+       GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
+
     }
+
+}
 
