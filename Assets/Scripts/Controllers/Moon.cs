@@ -24,16 +24,15 @@ public class Moon : MonoBehaviour
 
     public void OrbitalMotion(float radius, float speed, Transform target)
     {
-        float adjustedSpeed = speed * Time.deltaTime;
+        float adjustedSpeed = (speed * 10) * Time.deltaTime;
         count -= adjustedSpeed; 
         float adjustments = count  * Mathf.Deg2Rad;
         
         
-        Vector3 planetStore = planetTransform.position;
         Vector3 point = new Vector3(Mathf.Cos(adjustments), Mathf.Sin(adjustments)) * radius;
 
-        point.x += planetStore.x;
-        point.y += planetStore.y;
+        point.x += target.position.x;
+        point.y += target.position.y;
         transform.position = point;
 
     }
