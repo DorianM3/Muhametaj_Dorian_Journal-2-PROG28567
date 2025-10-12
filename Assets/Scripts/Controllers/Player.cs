@@ -27,14 +27,19 @@ public class Player : MonoBehaviour
     [Header("Movement")]
     public float maxSpeed;
     public float accelerationTime;
-    public float deccelerationTime; 
+    public float deccelerationTime;
     private Vector3 velocity;
     [Space(10)]
     [Header("Radius & Points")]
     public float radarRadius;
     public int numberOfPoints;
     public float powerUpRadius;
-    public int numberOfPowerups; 
+    public int numberOfPowerups;
+
+    [Space(10)]
+    [Header("Lock on Mechanic")]
+    public bool lockOn = false; 
+    public float angularSpeed;
     // Update is called once per frame
     void Update()
     {
@@ -70,6 +75,23 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             SpawnPowerUps(powerUpRadius, numberOfPowerups);
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            if(lockOn == false)
+            {
+                lockOn = true; 
+            }
+
+            else
+            {
+                lockOn = false;
+            }
+        }
+        if (lockOn)
+        {
+            RotateToAsteroid(asteroidTransforms);
         }
     }
 
@@ -280,5 +302,52 @@ public class Player : MonoBehaviour
         }
     }
 
+
+    public void RotateToAsteroid(List<Transform> asteroids)
+    {
+        float shortestDist = Vector3.Distance(asteroids[0].position, transform.position); 
+        Vector3 storeShortestDist = asteroids[0].position; 
+
+        for (int i = 0; i < asteroids.Count ; i++)
+        {
+           float distFromAstroid = Vector3.Distance(asteroids[i].position, transform.position);
+
+            if (distFromAstroid < shortestDist)
+            {
+                shortestDist = distFromAstroid;
+                storeShortestDist = asteroids[i].position; 
+            }
+        }
+        Debug.Log(storeShortestDist); 
+        Vector2 directionToTarget = (storeShortestDist - transform.position).normalized;
+
+        float asteroidAngle = CalculateDegAngleFromVector(directionToTarget);
+        float playerAngle = CalculateDegAngleFromVector(transform.up); 
+
+        float deltaAngle = Mathf.DeltaAngle(playerAngle, asteroidAngle);
+
+        float sign = Mathf.Sign(deltaAngle);
+
+        float angleStep = angularSpeed * sign * Time.deltaTime;
+
+        Debug.DrawLine(transform.position, transform.up + transform.position, Color.red);
+
+        if (Mathf.Abs(angleStep) < Mathf.Abs(deltaAngle))
+        {
+            transform.Rotate(0, 0, angleStep);
+        }
+
+        else
+        {
+            transform.Rotate(0, 0, deltaAngle);
+        }
     }
+
+
+    private float CalculateDegAngleFromVector(Vector2 vec)
+    {
+        return Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg;
+    }
+}
+
 
