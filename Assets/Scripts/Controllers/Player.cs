@@ -37,6 +37,10 @@ public class Player : MonoBehaviour
     public int numberOfPowerups;
 
     [Space(10)]
+    [Header("Missiles")]
+    public GameObject missilePrefab;
+
+    [Space(10)]
     [Header("Lock on Mechanic")]
     public bool lockOn = false; 
     public float angularSpeed;
@@ -75,6 +79,11 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             SpawnPowerUps(powerUpRadius, numberOfPowerups);
+        }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            MissileHoming();
         }
 
         if (Input.GetKeyDown(KeyCode.L))
@@ -347,6 +356,11 @@ public class Player : MonoBehaviour
     private float CalculateDegAngleFromVector(Vector2 vec)
     {
         return Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg;
+    }
+
+    public void MissileHoming()
+    {
+        GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
     }
 }
 
