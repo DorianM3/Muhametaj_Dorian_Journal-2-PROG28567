@@ -65,15 +65,15 @@ public class Player : MonoBehaviour
             SpawnBombOnRandomCorner(distanceAway);
         }
 
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            WarpPlayer(enemyTransform, warpDistance);
-        }
+       // if (Input.GetKeyDown(KeyCode.W))
+      //  {
+       //     WarpPlayer(enemyTransform, warpDistance);
+     //   }
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            DetectAstroids(range, asteroidTransforms); 
-        }
+       // if (Input.GetKeyDown(KeyCode.S))
+       // {
+          //  DetectAstroids(range, asteroidTransforms); 
+       // }
 
         PlayerMovement();
         PlayerRadar(radarRadius, numberOfPoints);
