@@ -8,7 +8,7 @@ public class Missile : MonoBehaviour
     private float radiusOfDetection = 3f;
     public bool homeIn = false;
     public bool dontLook = false; 
-    private Transform storeAsteroid;
+    public Transform storeAsteroid;
     [Range(0,10)]
     public float t;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -45,13 +45,14 @@ public class Missile : MonoBehaviour
         if (homeIn)
         {
             dontLook = true;
-            t += Time.deltaTime; 
+            t += Time.deltaTime /10 ; 
             transform.position = Vector3.Lerp(transform.position, storeAsteroid.position, t / 2);
 
             if (Vector3.Distance(transform.position, storeAsteroid.position) < 0.5f)
             {
                 Destroy(gameObject);
-                Destroy(storeAsteroid.gameObject); 
+                Destroy(storeAsteroid.gameObject);
+                
             }
 
             if (missilePos.y > 10)

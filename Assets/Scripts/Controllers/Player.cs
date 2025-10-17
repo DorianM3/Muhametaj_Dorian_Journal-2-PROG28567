@@ -42,12 +42,14 @@ public class Player : MonoBehaviour
 
     [Space(10)]
     [Header("Lock on Mechanic")]
-    public bool lockOn = false; 
+    public bool lockOn = false;
+    public bool stayLockedOn = false;
     public float angularSpeed;
+    public Asteroid[] asteroids;
     // Update is called once per frame
     void Update()
     {
-
+        asteroids = FindObjectsByType<Asteroid>(FindObjectsSortMode.None);
         if (Input.GetKeyDown(KeyCode.B))
         {
             SpawnBombAtOffset(bombOffset);
@@ -98,9 +100,22 @@ public class Player : MonoBehaviour
                 lockOn = false;
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.N) && lockOn)
+        {
+            if (stayLockedOn == false)
+            {
+                stayLockedOn = true;
+            }
+
+            else
+            {
+                stayLockedOn = false;
+            }
+        }
         if (lockOn)
         {
-            RotateToAsteroid(asteroidTransforms);
+            RotateToAsteroid();
         }
     }
 
@@ -312,23 +327,27 @@ public class Player : MonoBehaviour
     }
 
 
-    public void RotateToAsteroid(List<Transform> asteroids)
+    public void RotateToAsteroid()
     {
-        float shortestDist = Vector3.Distance(asteroids[0].position, transform.position); 
-        Vector3 storeShortestDist = asteroids[0].position; 
+        float shortestDist = Vector3.Distance(asteroids[0].transform.position, transform.position); 
+        Transform storeShortestDist = asteroids[0].transform;
 
-        for (int i = 0; i < asteroids.Count ; i++)
+        if (stayLockedOn == false)
         {
-           float distFromAstroid = Vector3.Distance(asteroids[i].position, transform.position);
-
-            if (distFromAstroid < shortestDist)
+            for (int i = 0; i < asteroids.Length; i++)
             {
-                shortestDist = distFromAstroid;
-                storeShortestDist = asteroids[i].position; 
+                float distFromAstroid = Vector3.Distance(asteroids[i].transform.position, transform.position);
+
+                if (distFromAstroid < shortestDist)
+                {
+                    shortestDist = distFromAstroid;
+                    storeShortestDist = asteroids[i].transform;
+                }
             }
         }
-        Debug.Log(storeShortestDist); 
-        Vector2 directionToTarget = (storeShortestDist - transform.position).normalized;
+
+      
+        Vector2 directionToTarget = (storeShortestDist.transform.position - transform.position).normalized;
 
         float asteroidAngle = CalculateDegAngleFromVector(directionToTarget);
         float playerAngle = CalculateDegAngleFromVector(transform.up); 
@@ -338,8 +357,6 @@ public class Player : MonoBehaviour
         float sign = Mathf.Sign(deltaAngle);
 
         float angleStep = angularSpeed * sign * Time.deltaTime;
-
-        Debug.DrawLine(transform.position, transform.up + transform.position, Color.red);
 
         if (Mathf.Abs(angleStep) < Mathf.Abs(deltaAngle))
         {
@@ -360,7 +377,7 @@ public class Player : MonoBehaviour
 
     public void MissileHoming()
     {
-        GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
+        GameObject missile = Instantiate(missilePrefab, transform.position, transform.rotation);
     }
 }
 
