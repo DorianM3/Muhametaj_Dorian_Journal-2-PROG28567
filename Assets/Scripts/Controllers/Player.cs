@@ -46,9 +46,12 @@ public class Player : MonoBehaviour
     public bool stayLockedOn = false;
     public float angularSpeed;
     public Asteroid[] asteroids;
+    private Transform storeShortestDist; 
+
     // Update is called once per frame
     void Update()
     {
+      
         asteroids = FindObjectsByType<Asteroid>(FindObjectsSortMode.None);
         if (Input.GetKeyDown(KeyCode.B))
         {
@@ -113,6 +116,7 @@ public class Player : MonoBehaviour
                 stayLockedOn = false;
             }
         }
+
         if (lockOn)
         {
             RotateToAsteroid();
@@ -329,25 +333,8 @@ public class Player : MonoBehaviour
 
     public void RotateToAsteroid()
     {
-        float shortestDist = Vector3.Distance(asteroids[0].transform.position, transform.position); 
-        Transform storeShortestDist = asteroids[0].transform;
 
-        if (stayLockedOn == false)
-        {
-            for (int i = 0; i < asteroids.Length; i++)
-            {
-                float distFromAstroid = Vector3.Distance(asteroids[i].transform.position, transform.position);
-
-                if (distFromAstroid < shortestDist)
-                {
-                    shortestDist = distFromAstroid;
-                    storeShortestDist = asteroids[i].transform;
-                }
-            }
-        }
-
-      
-        Vector2 directionToTarget = (storeShortestDist.transform.position - transform.position).normalized;
+        Vector2 directionToTarget = (GetShortestDistance().transform.position - transform.position).normalized;
 
         float asteroidAngle = CalculateDegAngleFromVector(directionToTarget);
         float playerAngle = CalculateDegAngleFromVector(transform.up); 
@@ -373,6 +360,31 @@ public class Player : MonoBehaviour
     private float CalculateDegAngleFromVector(Vector2 vec)
     {
         return Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg;
+    }
+
+    private Transform GetShortestDistance()
+    {
+        float shortestDist = Vector3.Distance(asteroids[0].transform.position, transform.position);
+        if (stayLockedOn == false)
+        {
+            Transform storeShortestDist = asteroids[0].transform;
+        }
+
+        if (stayLockedOn == false)
+        {
+            
+            for (int i = 0; i < asteroids.Length; i++)
+            {
+                float distFromAstroid = Vector3.Distance(asteroids[i].transform.position, transform.position);
+
+                if (distFromAstroid < shortestDist)
+                {
+                    shortestDist = distFromAstroid;
+                    storeShortestDist = asteroids[i].transform;
+                }
+            }
+        }
+        return storeShortestDist;
     }
 
     public void MissileHoming()
